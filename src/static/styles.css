@@ -142,3 +142,31 @@ footer {
   padding: 20px;
   color: #666;
 }
+
+.workitem-card {
+  margin-top: 15px;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+}
+
+.workitem-field {
+  margin-bottom: 10px;
+  line-height: 1.5;
+}
+
+.workitem-label {
+  font-weight: bold;
+  color: #1a237e;
+  margin-right: 6px;
+}
+
+.workitem-value {
+  color: #333;
+}
+
+.workitem-value div,
+.workitem-value p {
+  margin-top: 4px;
+}

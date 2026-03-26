@@ -83,4 +83,69 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Initialize app
   fetchActivities();
+
+  // ── Azure DevOps Work Item Lookup ──────────────────────────────────────────
+
+  const workitemForm = document.getElementById("workitem-form");
+  const workitemMessage = document.getElementById("workitem-message");
+  const workitemResult = document.getElementById("workitem-result");
+
+  workitemForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    const itemId = document.getElementById("workitem-id").value;
+
+    workitemMessage.className = "hidden";
+    workitemResult.classList.add("hidden");
+    workitemResult.innerHTML = "";
+
+    try {
+      const response = await fetch(`/workitems/${encodeURIComponent(itemId)}`);
+      const data = await response.json();
+
+      if (!response.ok) {
+        workitemMessage.textContent = data.detail || "An error occurred";
+        workitemMessage.className = "error";
+        return;
+      }
+
+      // Build a detail card from the returned fields
+      const fields = [
+        { label: "ID", value: data.id },
+        { label: "Type", value: data.type },
+        { label: "Title", value: data.title },
+        { label: "State", value: data.state },
+        { label: "Priority", value: data.priority },
+        { label: "Severity", value: data.severity },
+        { label: "Assigned To", value: data.assigned_to },
+        { label: "Created By", value: data.created_by },
+        { label: "Created Date", value: data.created_date ? new Date(data.created_date).toLocaleString() : null },
+        { label: "Changed Date", value: data.changed_date ? new Date(data.changed_date).toLocaleString() : null },
+        { label: "Area Path", value: data.area_path },
+        { label: "Iteration Path", value: data.iteration_path },
+        { label: "Tags", value: data.tags },
+        { label: "Description", value: data.description, html: true },
+        { label: "Repro Steps", value: data.repro_steps, html: true },
+        { label: "Acceptance Criteria", value: data.acceptance_criteria, html: true },
+      ];
+
+      let html = `<div class="workitem-card">`;
+      fields.forEach(({ label, value, html: isHtml }) => {
+        if (value === null || value === undefined || value === "") return;
+        const safeValue = isHtml ? DOMPurify.sanitize(String(value)) : String(value).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        html += `<div class="workitem-field">
+          <span class="workitem-label">${label}:</span>
+          ${isHtml ? `<div class="workitem-value">${safeValue}</div>` : `<span class="workitem-value">${safeValue}</span>`}
+        </div>`;
+      });
+      html += `</div>`;
+
+      workitemResult.innerHTML = html;
+      workitemResult.classList.remove("hidden");
+    } catch (error) {
+      workitemMessage.textContent = "Failed to look up work item. Please try again.";
+      workitemMessage.className = "error";
+      console.error("Error fetching work item:", error);
+    }
+  });
 });

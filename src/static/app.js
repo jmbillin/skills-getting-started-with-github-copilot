@@ -81,6 +81,40 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+  // Handle lookup form submission
+  const lookupForm = document.getElementById("lookup-form");
+  const lookupResult = document.getElementById("lookup-result");
+  const lookupMessage = document.getElementById("lookup-message");
+
+  lookupForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    const activityId = document.getElementById("activity-id").value;
+    lookupResult.classList.add("hidden");
+    lookupMessage.classList.add("hidden");
+
+    try {
+      const response = await fetch(`/activities/lookup?id=${encodeURIComponent(activityId)}`);
+      const result = await response.json();
+
+      if (response.ok) {
+        document.getElementById("lookup-name").textContent = result.name;
+        document.getElementById("lookup-description").textContent = result.description;
+        document.getElementById("lookup-version-filed").textContent = result.version_filed;
+        lookupResult.classList.remove("hidden");
+      } else {
+        lookupMessage.textContent = result.detail || "Activity not found";
+        lookupMessage.className = "error";
+        lookupMessage.classList.remove("hidden");
+      }
+    } catch (error) {
+      lookupMessage.textContent = "Failed to look up activity. Please try again.";
+      lookupMessage.className = "error";
+      lookupMessage.classList.remove("hidden");
+      console.error("Error looking up activity:", error);
+    }
+  });
+
   // Initialize app
   fetchActivities();
 });

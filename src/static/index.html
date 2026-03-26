@@ -21,6 +21,23 @@
         </div>
       </section>
 
+      <section id="lookup-container">
+        <h3>Look Up Activity by ID</h3>
+        <form id="lookup-form">
+          <div class="form-group">
+            <label for="activity-id">Activity ID:</label>
+            <input type="number" id="activity-id" required placeholder="Enter activity ID (e.g. 1)" min="1" />
+          </div>
+          <button type="submit">Look Up</button>
+        </form>
+        <div id="lookup-result" class="hidden">
+          <h4 id="lookup-name"></h4>
+          <p><strong>Description:</strong> <span id="lookup-description"></span></p>
+          <p><strong>Version Filed:</strong> <span id="lookup-version-filed"></span></p>
+        </div>
+        <div id="lookup-message" class="hidden"></div>
+      </section>
+
       <section id="signup-container">
         <h3>Sign Up for an Activity</h3>
         <form id="signup-form">

@@ -22,22 +22,28 @@ app.mount("/static", StaticFiles(directory=os.path.join(Path(__file__).parent,
 # In-memory activity database
 activities = {
     "Chess Club": {
+        "id": 1,
         "description": "Learn strategies and compete in chess tournaments",
         "schedule": "Fridays, 3:30 PM - 5:00 PM",
         "max_participants": 12,
-        "participants": ["michael@mergington.edu", "daniel@mergington.edu"]
+        "participants": ["michael@mergington.edu", "daniel@mergington.edu"],
+        "version_filed": "Fall 2024"
     },
     "Programming Class": {
+        "id": 2,
         "description": "Learn programming fundamentals and build software projects",
         "schedule": "Tuesdays and Thursdays, 3:30 PM - 4:30 PM",
         "max_participants": 20,
-        "participants": ["emma@mergington.edu", "sophia@mergington.edu"]
+        "participants": ["emma@mergington.edu", "sophia@mergington.edu"],
+        "version_filed": "Spring 2024"
     },
     "Gym Class": {
+        "id": 3,
         "description": "Physical education and sports activities",
         "schedule": "Mondays, Wednesdays, Fridays, 2:00 PM - 3:00 PM",
         "max_participants": 30,
-        "participants": ["john@mergington.edu", "olivia@mergington.edu"]
+        "participants": ["john@mergington.edu", "olivia@mergington.edu"],
+        "version_filed": "Fall 2023"
     }
 }
 
@@ -50,6 +56,19 @@ def root():
 @app.get("/activities")
 def get_activities():
     return activities
+
+
+@app.get("/activities/lookup")
+def lookup_activity(id: int):
+    """Look up an activity by its numeric ID and return its description and version filed"""
+    for name, details in activities.items():
+        if details["id"] == id:
+            return {
+                "name": name,
+                "description": details["description"],
+                "version_filed": details["version_filed"]
+            }
+    raise HTTPException(status_code=404, detail="Activity not found")
 
 
 @app.post("/activities/{activity_name}/signup")
